@@ -51,7 +51,6 @@ shader_param/quality = 4
 
 [node name="Player" type="KinematicBody2D"]
 z_index = 2
-collision_layer = 0
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -68,3 +67,11 @@ scale = Vector2( 0.28125, 0.28125 )
 texture = ExtResource( 2 )
 
 [node name="CoyoteJump" parent="." instance=ExtResource( 3 )]
+
+[node name="SkillTimers" type="Node" parent="."]
+
+[node name="LongRangeTimer" type="Timer" parent="SkillTimers"]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="SkillTimers/LongRangeTimer" to="." method="_on_LongRangeTimer_timeout"]
