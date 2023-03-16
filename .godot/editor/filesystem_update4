@@ -1,0 +1,8 @@
+res://default_env.tres
+res://scenes/main/Main.tscn
+res://scenes/player/Player.tscn
+res://scenes/player/Player.gd
+res://scenes/UI/UI.gd
+res://scenes/main/Game.tscn
+res://scenes/UI/UI.tscn
+res://scenes/boss/boss.gd

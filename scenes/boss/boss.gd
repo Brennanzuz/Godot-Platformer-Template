@@ -1,14 +1,15 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
 
-# boss states now only determines the animation to be played (found in AnimatedSprite
+# boss states now only determines the animation to be played (found in AnimatedSprite2D)
 # assets can be found in Aekashics -> Anubis
-# AnimationPlayer now has an empty track of position of AnimatedSprite
+# AnimationPlayer now has an empty track of position of AnimatedSprite2D
 # change_state() method changes the curr_state uniformly randomly to another state
 # change_state() is activated every 1 second, the time is set by StateTimer
 # take damage is called whenever the boss takes damage (from the player)
 # IMPORTANT: do not change MAX_HEALTH of Player and Boss. This is because UI health bar values are pegged to health values
-# do not change the ordering of UI scene. The script for UI depends on the ordering of UI node in Player node
+# do not change the ordering of UI scene. The script for UI depends on its position in the tree
+# when player takes damage, make changes to the "health" variable so as to influence the UI
 
 
 enum BOSS_STATE {IDLE, RUNNING, ATTACKING}
@@ -26,13 +27,13 @@ func _ready():
 func _physics_process(delta):
 	match curr_state:
 		BOSS_STATE.IDLE:
-			$AnimatedSprite.animation = "idle"
+			$AnimatedSprite2D.animation = "idle"
 		
 		BOSS_STATE.RUNNING:
-			$AnimatedSprite.animation = "running"
+			$AnimatedSprite2D.animation = "running"
 		
 		BOSS_STATE.ATTACKING:
-			$AnimatedSprite.animation = "attacking"
+			$AnimatedSprite2D.animation = "attacking"
 
 
 func change_state():
@@ -72,7 +73,7 @@ func change_state():
 
 
 func take_damage(damage):
-	print("take damage")
+	health = max(health - damage, 0)
 
 
 func _on_StateTimer_timeout():
