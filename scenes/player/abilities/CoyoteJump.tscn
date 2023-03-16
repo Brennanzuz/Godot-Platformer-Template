@@ -5,7 +5,7 @@
 [node name="GroundCollisionRayCast2D" type="RayCast2D" parent="."]
 position = Vector2( -8, 0 )
 enabled = true
-cast_to = Vector2( 0, 20 )
+target_position = Vector2( 0, 20 )
 collide_with_areas = true
 
 [node name="JumpGracePeriod" type="Timer" parent="."]

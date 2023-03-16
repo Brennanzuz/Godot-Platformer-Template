@@ -1,9 +1,8 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
 enum States {GROUNDED, AIRBORNE, CLIMBING, ATTACKING}
 
 var input_vector
-var velocity = Vector2.ZERO
 var is_facing_right = false
 var grounded_state = States.AIRBORNE
 var jumps_remaining
@@ -28,7 +27,8 @@ var health = MAX_HEALTH
 
 
 func _ready():
-	sprite_scale = $Sprite.scale
+	sprite_scale = $Sprite2D.scale
+	velocity = Vector2.ZERO
 
 
 func _physics_process(delta):
@@ -39,14 +39,12 @@ func _physics_process(delta):
 		States.AIRBORNE:
 			if is_on_floor():
 				grounded_state = States.GROUNDED
-				continue
 			air_moving(delta)
 
 		States.GROUNDED:
 			if !is_on_floor():
 				grounded_state = States.AIRBORNE
 				$CoyoteJump/JumpGracePeriod.start()
-				continue
 			ground_moving(delta)
 	
 	# skills
@@ -58,10 +56,10 @@ func _physics_process(delta):
 
 func change_direction():
 	if input_vector.x > 0:
-		$Sprite.scale.x = -sprite_scale.x
+		$Sprite2D.scale.x = -sprite_scale.x
 		is_facing_right = true
 	elif input_vector.x < 0:
-		$Sprite.scale.x = sprite_scale.x
+		$Sprite2D.scale.x = sprite_scale.x
 		is_facing_right = false
 
 
@@ -69,7 +67,10 @@ func ground_moving(delta):
 	velocity.y += delta * gravity
 	change_direction()
 	velocity.x = lerp(velocity.x, input_vector.x * ground_speed, friction)
-	velocity = move_and_slide(velocity, Vector2.UP)
+	set_velocity(velocity)
+	set_up_direction(Vector2.UP)
+	move_and_slide()
+	velocity = velocity
 	jumps_remaining = 1
 	if Input.is_action_pressed("player_jump"):
 		jump()
@@ -79,7 +80,10 @@ func air_moving(delta):
 	velocity.y += delta * gravity
 	change_direction()
 	velocity.x = lerp(velocity.x, input_vector.x * ground_speed, air_resistance)
-	velocity = move_and_slide(velocity, Vector2.UP)
+	set_velocity(velocity)
+	set_up_direction(Vector2.UP)
+	move_and_slide()
+	velocity = velocity
 	if !$CoyoteJump/JumpGracePeriod.is_stopped() && !$CoyoteJump/GroundCollisionRayCast2D.is_colliding():
 		if Input.is_action_pressed("player_jump") && jumps_remaining > 0:
 			jump()
@@ -93,7 +97,7 @@ func jump():
 func long_range_attack():
 	if long_range_attack_enabled:
 		long_range_attack_enabled = false
-		var bullet = Bullet.instance()
+		var bullet = Bullet.instantiate()
 		if is_facing_right:
 			bullet.direction = Vector2.RIGHT
 		else:
@@ -106,10 +110,10 @@ func long_range_attack():
 func short_range_attack():
 	if short_range_attack_enabled:
 		short_range_attack_enabled = false
-		var short_range = ShortRange.instance()
+		var short_range = ShortRange.instantiate()
 		short_range.scale = Vector2(2, 2)
 		add_child(short_range)
-		move_child(short_range, $Sprite.get_index())
+		move_child(short_range, $Sprite2D.get_index())
 
 
 func _on_LongRangeTimer_timeout():

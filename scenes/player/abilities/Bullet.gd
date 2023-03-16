@@ -8,7 +8,7 @@ var direction
 
 func _ready():
 	if direction == Vector2.LEFT:
-		$AnimatedSprite.flip_h = true
+		$AnimatedSprite2D.flip_h = true
 
 
 func _physics_process(delta):
